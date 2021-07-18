@@ -1,0 +1,94 @@
+{
+    "Error Type": {
+        "identifier": "BAD_REQUEST",
+        "parentErrorType": {
+            "identifier": "CLIENT_ERROR",
+            "parentErrorType": {
+                "identifier": "ANY",
+                "parentErrorType": null,
+                "namespace": "MULE"
+            },
+            "namespace": "TWILIO"
+        },
+        "namespace": "TWILIO"
+    },
+    "Error Cause": {
+        "localizedMessage": "Request returned status code 400",
+        "errorMessage": {
+            "inboundAttachmentNames": [],
+            "exceptionPayload": null,
+            "inboundPropertyNames": [],
+            "outboundAttachmentNames": [],
+            "outboundPropertyNames": [],
+            "payload": {
+                "code": 21604,
+                "message": "A 'To' phone number is required.",
+                "more_info": "https://www.twilio.com/docs/errors/21604",
+                "status": 400
+            },
+            "attributes": {
+                "headers": {
+                    "date": "Tue, 01 Jun 2021 07:50:35 GMT",
+                    "content-type": "application/json",
+                    "content-length": "134",
+                    "connection": "close",
+                    "twilio-request-id": "RQ24b2cafd2174f8aedf08c8032484cb1a",
+                    "twilio-request-duration": "0.092",
+                    "access-control-allow-origin": "*",
+                    "access-control-allow-headers": "Accept, Authorization, Content-Type, If-Match, If-Modified-Since, If-None-Match, If-Unmodified-Since",
+                    "access-control-allow-methods": "GET, POST, DELETE, OPTIONS",
+                    "access-control-expose-headers": "ETag",
+                    "access-control-allow-credentials": "true",
+                    "x-powered-by": "AT-5000",
+                    "x-shenanigans": "none",
+                    "x-home-region": "us1",
+                    "x-api-domain": "api.twilio.com",
+                    "strict-transport-security": "max-age=31536000"
+                },
+                "reasonPhrase": "Bad Request",
+                "statusCode": 400
+            }
+        },
+        "cause": null,
+        "type": "BAD_REQUEST",
+        "message": "Request returned status code 400",
+        "stackTrace": [],
+        "suppressed": []
+    },
+    "Error Message": {
+        "inboundAttachmentNames": [],
+        "exceptionPayload": null,
+        "inboundPropertyNames": [],
+        "outboundAttachmentNames": [],
+        "outboundPropertyNames": [],
+        "payload": {
+            "code": 21604,
+            "message": "A 'To' phone number is required.",
+            "more_info": "https://www.twilio.com/docs/errors/21604",
+            "status": 400
+        },
+        "attributes": {
+            "headers": {
+                "date": "Tue, 01 Jun 2021 07:50:35 GMT",
+                "content-type": "application/json",
+                "content-length": "134",
+                "connection": "close",
+                "twilio-request-id": "RQ24b2cafd2174f8aedf08c8032484cb1a",
+                "twilio-request-duration": "0.092",
+                "access-control-allow-origin": "*",
+                "access-control-allow-headers": "Accept, Authorization, Content-Type, If-Match, If-Modified-Since, If-None-Match, If-Unmodified-Since",
+                "access-control-allow-methods": "GET, POST, DELETE, OPTIONS",
+                "access-control-expose-headers": "ETag",
+                "access-control-allow-credentials": "true",
+                "x-powered-by": "AT-5000",
+                "x-shenanigans": "none",
+                "x-home-region": "us1",
+                "x-api-domain": "api.twilio.com",
+                "strict-transport-security": "max-age=31536000"
+            },
+            "reasonPhrase": "Bad Request",
+            "statusCode": 400
+        }
+    },
+    "Error Description": "Request returned status code 400"
+}

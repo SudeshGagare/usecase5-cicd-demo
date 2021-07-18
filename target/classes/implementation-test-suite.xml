@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:os="http://www.mulesoft.org/schema/mule/os"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
+	xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd">
+	<munit:config name="implementation-test-suite.xml" />
+	<munit:test name="implementation-test-suite-sms_twilio_flowTest" doc:id="700ccde0-3248-4814-8bfe-069f474a03d3" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock Twilio Create Message" doc:id="a939e939-d143-4ae7-9446-45cae0eb79b4" processor="twilio:create20100401-accounts-messagesjson-by-account-sid">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="Create Message" attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="24ac2fc8-23d9-483a-88a5-d9459987c53e" attributeName="doc:id" />
+					<munit-tools:with-attribute whereValue="Twilio_Connector_Config" attributeName="config-ref" />
+					<munit-tools:with-attribute whereValue="${secure::twilio.user}" attributeName="accountSid" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[MunitTools::getResourceAsString('sampleresponse.json')]" mediaType="application/json" encoding="UTF-8" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit-tools:spy doc:name="Spy" doc:id="3e2c6014-60c7-43ac-ae11-ec3b25be4072" processor="twilio:create20100401-accounts-messagesjson-by-account-sid">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="Create Message" attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="24ac2fc8-23d9-483a-88a5-d9459987c53e" attributeName="doc:id" />
+					<munit-tools:with-attribute whereValue="Twilio_Connector_Config" attributeName="config-ref" />
+					<munit-tools:with-attribute whereValue="${secure::twilio.user}" attributeName="accountSid" />
+				</munit-tools:with-attributes>
+				<munit-tools:after-call >
+					<munit-tools:store doc:name="Store" doc:id="bdfb6a3f-1dc4-4151-a53a-0db208569f9c" key="response" />
+				</munit-tools:after-call>
+			</munit-tools:spy>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="a31fd345-534e-4009-989b-c2da401c0fe0">
+				<munit:payload value="#[MunitTools::getResourceAsString('inputPayload.json')]" mediaType="application/json" />
+			</munit:set-event>
+			<flow-ref doc:name="Flow-ref to sms_twilio_flow" doc:id="5b39119e-2f8e-4a8c-aa47-f02ad18124c9" name="post:\sms:application\json:twilio-sms-api-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:retrieve doc:name="Retrieve" doc:id="3ea21122-9185-45bb-9256-5c7ee7b2c73b" key="response"/>
+			<munit-tools:assert doc:name="Assert expression" doc:id="e0f1a7d1-ad21-4ea0-ae85-e1cbd3d10118" >
+				<munit-tools:that ><![CDATA[#[import * from dw::test::Asserts 
+ ---
+payload must equalTo(
+{
+    "Sms body ": "Sent from your Twilio trial account - Hi, My Name is Sudesh Gagare",
+    "Receiver ": "+919373261908",
+    "Status ": "queued"
+}
+)]]]></munit-tools:that>
+			</munit-tools:assert>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="Global-Error-Handler-Test_Check" doc:id="9778bdf4-3b85-4ea9-a87d-b185d3cde252" description="Test">
+			<munit:behavior>
+				<munit-tools:mock-when doc:name="Mock Twilio Create Message" doc:id="56df75db-3813-45b0-bb9a-93413fabbc7a" processor="twilio:create20100401-accounts-messagesjson-by-account-sid">
+					<munit-tools:with-attributes>
+						<munit-tools:with-attribute whereValue="Create Message" attributeName="doc:name" />
+						<munit-tools:with-attribute whereValue="24ac2fc8-23d9-483a-88a5-d9459987c53e" attributeName="doc:id" />
+						<munit-tools:with-attribute whereValue="Twilio_Connector_Config" attributeName="config-ref" />
+						<munit-tools:with-attribute whereValue="${secure::twilio.user}" attributeName="accountSid" />
+					</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[MunitTools::getResourceAsString('errorresponse.json')]" mediaType="application/json" encoding="UTF-8" />
+					<munit-tools:error typeId="TWILIO:BAD_REQUEST" />
+				</munit-tools:then-return>
+				</munit-tools:mock-when>
+			</munit:behavior>
+			<munit:execution>
+				<munit:set-event doc:name="Set Event" doc:id="b07104a6-7778-40f4-8c72-eb14c422704e">
+				<munit:payload value="#[MunitTools::getResourceAsString('inputPayloadEmptyNumber.json')]" mediaType="application/json" />
+				</munit:set-event>
+				<try doc:name="Try" doc:id="1975cda4-5e9f-420c-a72a-d4620fc7bf7c" >
+				<flow-ref doc:name="Flow-ref to sms_twilio_flow" doc:id="7fd5a240-19e0-4872-a561-c519a7526b1a" name="post:\sms:application\json:twilio-sms-api-config" />
+				<error-handler >
+					<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="ba72a246-3976-43ba-9184-a5df7099fcaf" type="ANY"/>
+				</error-handler>
+			</try>
+			</munit:execution>
+		<munit:validation>
+			<munit-tools:verify-call doc:name="Verify call" doc:id="ce35b65d-cb3b-44a6-b646-d574087a577c" processor="ee:transform" atLeast="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="Transform Message" attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="37f886ee-f016-43c7-9f0b-f5006c812e12" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+			</munit:validation>
+		</munit:test>
+
+
+</mule>

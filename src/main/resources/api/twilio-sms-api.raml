@@ -1,0 +1,30 @@
+#%RAML 1.0
+title: Twilio SMS API
+description: This API will enable sending of messages from Twilio.
+
+types:
+  sms: !include /exchange_modules/32f491da-a07f-4428-9968-be8175178f87/twilio-dataypes/1.0.0/twilio-dataypes.raml
+
+traits:
+  errorresponse: !include /exchange_modules/32f491da-a07f-4428-9968-be8175178f87/errorresponse/1.0.0/errorresponse.raml
+
+securitySchemes:
+  basicauth: !include /exchange_modules/32f491da-a07f-4428-9968-be8175178f87/basicauthentication/1.0.0/basicauthentication.raml
+  
+
+securedBy: [basicauth]
+/sms:
+  is: [errorresponse]
+  description: Send an sms using Twilio API.
+  post:
+    description: Send sms from a number to another number.
+    body:
+      application/json:
+        type: sms
+        example: !include /exchange_modules/32f491da-a07f-4428-9968-be8175178f87/twilio-sms-examples/1.0.0/twilio-sms-examples.raml
+    responses:
+      201:
+        body:
+          application/json:
+            example:
+              sms sent but not in reality.

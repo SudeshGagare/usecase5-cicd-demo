@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:api-gateway="http://www.mulesoft.org/schema/mule/api-gateway" xmlns:tls="http://www.mulesoft.org/schema/mule/tls"
+	xmlns:secure-properties="http://www.mulesoft.org/schema/mule/secure-properties"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:twilio="http://www.mulesoft.org/schema/mule/twilio" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/twilio http://www.mulesoft.org/schema/mule/twilio/current/mule-twilio.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/secure-properties http://www.mulesoft.org/schema/mule/secure-properties/current/mule-secure-properties.xsd
+http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd
+http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/mule/api-gateway/current/mule-api-gateway.xsd">
+	<twilio:config name="Twilio_Connector_Config" doc:name="Twilio Connector Config" doc:id="d056bd81-ff44-47d5-963f-f32090241c6e" >
+		<twilio:account-sid-auth-token-connection username="${secure::twilio.user}" password="${secure::twilio.pass}" protocol="HTTPS"/>
+	</twilio:config>
+	<http:listener-config name="HTTPS_Listener_config" doc:name="HTTP Listener config" doc:id="544e9f89-48bc-4633-81ef-5d79ef0f113a" >
+		<http:listener-connection host="0.0.0.0" port="${secure::https.port}" protocol="HTTPS">
+			<tls:context >
+				<tls:key-store type="pkcs12" path="keystore.jks" keyPassword="password123456789" password="password123456789" />
+			</tls:context>
+		</http:listener-connection>
+	</http:listener-config>
+	<secure-properties:config name="Secure_Properties_Config" doc:name="Secure Properties Config" doc:id="d15a8d24-3680-4436-8482-19958c3cf53d" file="properties/${env}.yaml" key="${key}" >
+		<secure-properties:encrypt algorithm="Blowfish" />
+	</secure-properties:config>
+	<global-property doc:name="Global Property" doc:id="7d7b2a61-d422-4d82-a77f-e20a9938e622" name="key" value="mulesoft" />
+	<global-property doc:name="Global Property" doc:id="a5a6931d-07a3-4c37-9c17-351be02f5384" name="env" value="dev" />
+	<configuration doc:name="Configuration" doc:id="4e9a37ad-ad0b-43a1-800c-f6c107f0f9e6" defaultErrorHandler-ref="globalError_Handler" />
+	<api-gateway:autodiscovery apiId="16945495" ignoreBasePath="true" doc:name="API Autodiscovery" doc:id="f2c3a671-0449-4cae-88ce-db70c5bcf74d" flowRef="twilio-sms-api-main" />
+	<error-handler name="globalError_Handler" doc:id="0c6cddf9-f7c2-43d8-8963-785d1ef7b3bb" >
+		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="f960c525-5cc7-49d2-8da0-0ccc174e5a54" type="ANY">
+			<ee:transform doc:name="Transform Message" doc:id="37f886ee-f016-43c7-9f0b-f5006c812e12">
+				<ee:message>
+					<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"Error Type": error.errorType,
+	"Error Cause": error.cause,
+	"Error Message": error.errorMessage,
+	"Error Description": error.description
+}]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+		</on-error-propagate>
+	</error-handler>
+</mule>
